@@ -1,0 +1,38 @@
+SearchMerge:
+
+<SearchMerge>:
+    orientation: "vertical"
+    BoxLayout:
+        orientation: "horizontal"
+        spacing:"10dp"
+        Button:
+
+            text: "Search"
+            size_hint: None, None
+            size: "100dp", "50dp"
+            on_press: root.search_app()
+        TextInput:
+            id: input1
+            text: root.filename
+            size_hint: None, None
+            size: "200dp", "50dp"
+
+
+    BoxLayout:
+        orientation: "horizontal"
+        spacing: "10dp"
+
+        Button:
+            text: "Merge"
+            size_hint: None, None
+            size: "100dp", "50dp"
+            on_press: root.merge_app()
+
+        TextInput:
+            id: input
+            text: root.format
+            size_hint: None, None
+            size: "200dp", "50dp"
+
+
+
