@@ -2,20 +2,28 @@ SearchMerge:
 
 <SearchMerge>:
     orientation: "vertical"
+    color: 0, 0, 0, 1
     BoxLayout:
         orientation: "horizontal"
         spacing:"10dp"
         Button:
-
             text: "Search"
             size_hint: None, None
             size: "100dp", "50dp"
+            pos: "1dp", "1dp"
             on_press: root.search_app()
         TextInput:
             id: input1
             text: root.filename
             size_hint: None, None
             size: "200dp", "50dp"
+
+    BoxLayout:
+        orientation: "horizontal"
+        Label:
+            text: root.file_locations
+            color: 0, 1, 0, 1
+            size: "100dp", "100dp"
 
 
     BoxLayout:
@@ -34,5 +42,11 @@ SearchMerge:
             size_hint: None, None
             size: "200dp", "50dp"
 
+    BoxLayout:
+        orientation: "horizontal"
+        Label:
+            text: root.combined
+            color: 0, 1, 0, 1
+            size: "100dp", "100dp"
 
 

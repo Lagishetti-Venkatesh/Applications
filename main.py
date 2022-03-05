@@ -14,18 +14,23 @@ class LaunchingApp(App):
 class SearchMerge(BoxLayout):
     format = StringProperty("Enter the Format ")
     filename = StringProperty("Enter the File Name")
+    file_locations = StringProperty("File Locations will be displayed here.")
+    combined = StringProperty("final file name")
 
     def merge_app(self):
         file_format = self.ids.input.text
         print(file_format)
         filename = self.merge(file_format)
         print(filename)
+        self.combined = filename
 
     def search_app(self):
         file_name = self.ids.input1.text
         print(file_name)
         data = self.search(file_name)
         print(data)
+        self.file_locations ="\n".join(data)
+        print(self.file_locations)
 
     def merge(self, file_format):
         """
@@ -38,8 +43,6 @@ class SearchMerge(BoxLayout):
             File Containing the Merged data of all the file of Same extension.
         """
 
-        pass
-
         # input
         extension = file_format.strip().lower()
         extension = extension.replace(extension, str("." + extension))
@@ -49,7 +52,7 @@ class SearchMerge(BoxLayout):
         excel_data = pd.DataFrame()
         print()
 
-        for (root, _, files) in os.walk(os.getenv('HOME'), topdown=True):
+        for (root, _, files) in os.walk(os.getenv('HOME')+os.sep+"Documents", topdown=True):
 
             if 'anaconda3' in root or 'PycharmProjects' in root:
                 continue
@@ -83,7 +86,19 @@ class SearchMerge(BoxLayout):
         merge_obj.write("Combined.pdf")
         merge_obj.close()
         excel_data.to_excel('Combined.xlsx')
-        return "Combined"
+        list_of_files = list(os.listdir())
+        list_of_files = os.listdir()
+        files_to_be_not_removed = ['sample.py', 'launching.kv', 'main.py', 'venv', '.idea', '.git', 'requirements.txt',
+                                   "Combined" + extension]
+
+        for file in files_to_be_not_removed:
+            list_of_files.remove(file)
+
+        for file in list_of_files:
+            print
+            os.system("rm -r " + file)
+
+        return "Combined"+extension
 
     def search(self, file_name):
         """
