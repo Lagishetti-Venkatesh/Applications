@@ -36,7 +36,8 @@ class SearchMerge(BoxLayout):
         """
         Description:
             This will take the extension name and returns
-            the single file containing the data of all the files with the extension mentioned.
+            the single file containing the data of all the files with the extension mentioned
+            from the Documents directory.
         Input:
             Takes extension in text format
         Output:
