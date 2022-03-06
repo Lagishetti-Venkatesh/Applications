@@ -4,6 +4,8 @@ import pandas as pd
 from kivy.app import App
 from kivy.properties import StringProperty
 from kivy.uix.boxlayout import BoxLayout
+import logging as lg
+from kivy.core.window import Window
 
 
 
@@ -17,22 +19,32 @@ class SearchMerge(BoxLayout):
     file_locations = StringProperty("File Locations will be displayed here.")
     combined = StringProperty("final file name")
 
+
+    def log_data(self, log, level):
+        """
+        Description:
+            This function is used for setting up the logging process
+
+        Input:
+            Nothing.
+
+        Output:
+            returns a logging object which can be used for creating the various users logs.
+        """
+        for handler in lg.root.handlers[:]:
+            lg.root.removeHandler(handler)
+        # changing To current directory.
+        os.chdir(os.getcwd())
+        print(os.getcwd())
+        lg.basicConfig(filename="programFlowData.log", level=lg.INFO,
+                       format="%(name)s %(asctime)s %(levelname)s %(message)s", filemode="a")
+        if level == 'info':
+            lg.info(log)
+        if level == "error":
+            lg.error(log)
+        if level == "warning":
+            lg.warning(log)
     def merge_app(self):
-        file_format = self.ids.input.text
-        print(file_format)
-        filename = self.merge(file_format)
-        print(filename)
-        self.combined = filename
-
-    def search_app(self):
-        file_name = self.ids.input1.text
-        print(file_name)
-        data = self.search(file_name)
-        print(data)
-        self.file_locations ="\n".join(data)
-        print(self.file_locations)
-
-    def merge(self, file_format):
         """
         Description:
             This will take the extension name and returns
@@ -43,17 +55,22 @@ class SearchMerge(BoxLayout):
         Output:
             File Containing the Merged data of all the file of Same extension.
         """
+        # logging variable for merge_operations
+
+
 
         # input
-        extension = file_format.strip().lower()
+        extension = self.ids.input.text.strip().lower()
+
         extension = extension.replace(extension, str("." + extension))
+
+        self.log_data("Passed File format: {0} ".format(extension), "info")
 
         file_obj = open('Combined' + extension, 'ab')
         merge_obj = PyPDF2.PdfFileMerger()
         excel_data = pd.DataFrame()
-        print()
 
-        for (root, _, files) in os.walk(os.getenv('HOME')+os.sep+"Documents", topdown=True):
+        for (root, _, files) in os.walk(os.getenv('HOME') + os.sep + "Documents", topdown=True):
 
             if 'anaconda3' in root or 'PycharmProjects' in root:
                 continue
@@ -73,15 +90,15 @@ class SearchMerge(BoxLayout):
                             with open(r'' + root + os.sep + file, 'rb') as data_obj:
                                 file_obj.write(data_obj.read())
                 except FileNotFoundError:
-                    print("Broken file Exists: \n Location with  ")
+                    self.log_data("Broken file Exists: \n Location with  ", "error")
                     reference = root + os.sep + file
-                    print(reference)
+                    self.log_data("Location where file is Broken: " + reference, "error")
                     continue
                 except MemoryError:
-                    print(MemoryError)
+                    self.log_data("MemoryError: ".format(MemoryError), "error")
                     break
-                except Exception:
-                    continue
+                except Exception as e:
+                    self.log_data("Exception Raised: {0}".format(e), "error")
 
         file_obj.close()
         merge_obj.write("Combined.pdf")
@@ -90,18 +107,18 @@ class SearchMerge(BoxLayout):
         list_of_files = list(os.listdir())
         list_of_files = os.listdir()
         files_to_be_not_removed = ['sample.py', 'launching.kv', 'main.py', 'venv', '.idea', '.git', 'requirements.txt',
-                                   "Combined" + extension]
+                                   "Combined" + extension, "programFlowData.log"]
 
         for file in files_to_be_not_removed:
             list_of_files.remove(file)
 
         for file in list_of_files:
-            print
             os.system("rm -r " + file)
+        self.log_data("File name Saved {0} ".format("Combined" + extension), "info")
 
-        return "Combined"+extension
+        self.combined = "Combined" + extension
 
-    def search(self, file_name):
+    def search_app(self):
         """
         Description:
             This function takes the filename and searches over all the directories
@@ -111,14 +128,25 @@ class SearchMerge(BoxLayout):
         Output:
             returns list of folder locations
         """
+
         locations = []
-        filename = file_name.strip()
-        for (root, _, files) in os.walk(os.getenv('HOME'), topdown=True):
-            for file in files:
-                if filename in file:
-                    locations.append(root)
-        return list(set(locations))
+        filename = self.ids.input1.text.strip()
+        self.log_data("File name or reference for file searching: {0}".format(filename), "info")
+        try:
+            for (root, _, files) in os.walk(os.getenv('HOME'), topdown=True):
+                for file in files:
+                    if filename in file:
+                        pointing = "==> " + root + "\n"
+                        locations.append(pointing)
+
+        except Exception as e:
+            self.log_data("Exception: {0}".format(e))
+
+        self.file_locations = "\n".join(list(set(locations)))
+        self.log_data(self.file_locations, "info")
 
 
 if __name__ == '__main__':
+    Window.clearcolor = (0, 1, 0, 0.2)
     LaunchingApp().run()
+

@@ -1,6 +1,9 @@
 SearchMerge:
 
 <SearchMerge>:
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
     orientation: "vertical"
     color: 0, 0, 0, 1
     BoxLayout:
@@ -20,7 +23,7 @@ SearchMerge:
 
     BoxLayout:
         orientation: "horizontal"
-        Label:
+        TextInput:
             text: root.file_locations
             color: 0, 1, 0, 1
             size: "100dp", "100dp"
@@ -44,7 +47,7 @@ SearchMerge:
 
     BoxLayout:
         orientation: "horizontal"
-        Label:
+        TextInput:
             text: root.combined
             color: 0, 1, 0, 1
             size: "100dp", "100dp"
